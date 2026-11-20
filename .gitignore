@@ -1,0 +1,36 @@
+# data & artefacts
+data/raw/*
+data/interim/*
+data/processed/*
+!data/**/.gitkeep
+models/*
+!models/.gitkeep
+mlruns/
+mlartifacts/
+*.parquet
+*.xlsx
+*.csv
+!reports/**/*.csv
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# notebooks
+.ipynb_checkpoints/
+
+# secrets & local
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+.DS_Store
+Thumbs.db

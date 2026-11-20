@@ -1,0 +1,36 @@
+# All parameters live here. Code reads this file; no magic numbers in src/.
+seed: 42
+
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  models: models
+  reports: reports
+  figures: reports/figures
+
+data:
+  name: "3M DDataset 2.0.0 (Petrobras)"
+  url: "https://github.com/petrobras/3W"
+  licence: "CC BY 4.0"
+  # One entry per file. Fill sha256 after the first verified download
+  # (run `sha256sum <file>` and paste). `url: null` = manual download (licence requires it).
+  files: []
+  #  - name: example.parquet
+  #    url: https://...
+  #    sha256: "..."
+
+split:
+  # Decided in stage 4 and documented in docs/02-split-and-leakage.md
+  strategy: time        # time | group | group_time | rolling_origin
+  group_col: null
+  time_col: null
+
+evaluation:
+  bootstrap_resamples: 1000
+  ci: 0.95
+
+publish:
+  slug: "oil-well-event-early-warning"
+  figures:            # ordered; becomes the website carousel order
+    - 00-hero.png

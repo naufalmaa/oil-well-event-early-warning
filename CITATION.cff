@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Oil-Well Event Early Warning"
+authors:
+  - family-names: "MA"
+    given-names: "Naufal"
+repository-code: "https://github.com/naufalmaa/oil-well-event-early-warning"
+license: MIT

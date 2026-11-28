@@ -10,21 +10,31 @@ paths:
   figures: reports/figures
 
 data:
-  name: "3M DDataset 2.0.0 (Petrobras)"
+  name: "3W Dataset 2.0.0 (Petrobras)"
   url: "https://github.com/petrobras/3W"
   licence: "CC BY 4.0"
-  # One entry per file. Fill sha256 after the first verified download
-  # (run `sha256sum <file>` and paste). `url: null` = manual download (licence requires it).
-  files: []
-  #  - name: example.parquet
-  #    url: https://...
-  #    sha256: "..."
+  root: data/raw/3w          # symlink → ~/data/3w/dataset (git-ignored)
+  files: []                  # 3W comes via git sparse clone, not via `make data`
 
-split:
-  # Decided in stage 4 and documented in docs/02-split-and-leakage.md
-  strategy: time        # time | group | group_time | rolling_origin
-  group_col: null
+split:                       # stage 4 · docs/02-split-and-leakage.md
+  strategy: group            # all instances of a well on one side
+  group_col: well_id
   time_col: null
+  test_size: 0.3             # share of REAL wells in test; sim/drawn never in test
+
+features:
+  # Variables resampled to 1 minute (mean/std/last). Revise after EDA (Sunday):
+  # keep variables that are mostly present in most wells.
+  variables: [P-PDG, P-TPT, T-TPT, P-MON-CKP, T-JUS-CKP, P-JUS-CKGL, QGL]
+
+baseline:                    # stage 5 · trailing z-score rule
+  variables: [P-TPT, P-PDG, T-TPT]
+  window: 60                 # minutes of history for the trailing mean/std
+
+alert:                       # same rule for baseline and model (framing doc)
+  persistence: 3             # minutes above threshold before an alert fires
+  cooldown: 60               # minutes of silence per instance after an alert
+  budget_per_well_day: 0.1   # max false alarms per well-day on normal instances
 
 evaluation:
   bootstrap_resamples: 1000
@@ -32,5 +42,5 @@ evaluation:
 
 publish:
   slug: "oil-well-event-early-warning"
-  figures:            # ordered; becomes the website carousel order
+  figures:                   # ordered; becomes the website carousel order
     - 00-hero.png

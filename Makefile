@@ -3,7 +3,7 @@
 PKG := oil_well_event_early_warning
 RUN := uv run
 
-.PHONY: help setup data eda baseline train evaluate test lint format publish-assets clean
+.PHONY: help setup data split prepare eda baseline train evaluate test lint format publish-assets clean
 
 help: ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -15,6 +15,12 @@ setup: ## Install deps (uv) and git hooks
 
 data: ## Stage 2 · download raw data and verify checksums
 	$(RUN) python -m $(PKG).data.download --config configs/default.yaml
+
+split: ## Stage 4 · write configs/split.yaml (run once, then commit it)
+	$(RUN) python -m $(PKG).data.make_split --config configs/default.yaml
+
+prepare: ## Stage 3→6 · 1 Hz instances → data/processed/minutes.parquet
+	$(RUN) python -m $(PKG).data.prepare --config configs/default.yaml
 
 baseline: ## Stage 5 · run the baseline and write its metrics
 	$(RUN) python -m $(PKG).models.baseline --config configs/default.yaml
